@@ -276,6 +276,16 @@ begin
   return v_n;
 end $$;
 
+-- ───────────────────────── 테이블 권한 ─────────────────────────
+-- 프로젝트 생성 시 「Automatically expose new tables」를 켰든 껐든 같은 결과가 되도록 명시한다.
+--   · 참여자(anon/authenticated): 테이블 직접 접근 없음 — 아래 RPC로만
+--   · 서버 함수(service_role): AI 대화 로그 기록·컨텍스트 읽기
+revoke all on public.participants, public.runs, public.records, public.coach_turns,
+              public.coach_reports, public.crisis_terms from anon, authenticated;
+grant select, insert, update, delete on public.participants, public.runs, public.records, public.coach_turns,
+              public.coach_reports, public.crisis_terms to service_role;
+grant usage, select on all sequences in schema public to service_role;
+
 -- ───────────────────────── 실행 권한 ─────────────────────────
 
 revoke all on function public.current_participant_id()                   from public, anon, authenticated;

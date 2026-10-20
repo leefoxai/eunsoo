@@ -19,15 +19,15 @@ grant execute on function pg_temp.expect_error(text, text) to anon, authenticate
 set role authenticated;
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000a1', false);
 
+select pg_temp.expect_error('select count(*) from public.participants', 'permission denied');
 do $$ begin
-  if (select count(*) from public.participants) <> 0 then raise exception 'participants leaked via RLS'; end if;
   if public.me() is not null then raise exception 'me() should be null before claim'; end if;
 end $$;
 select pg_temp.expect_error('select public.start_run(16)', 'not_logged_in');
 select pg_temp.expect_error($q$select public.claim_participant('demo01', 'wrong')$q$, 'invalid_credentials');
 select pg_temp.expect_error($q$select public.create_participant('X1', 'abcdefgh')$q$, 'permission denied');
 select pg_temp.expect_error($q$select public.reset_participant('DEMO01')$q$, 'permission denied');
-select pg_temp.expect_error($q$insert into public.coach_turns (run_id, participant_id, day, turn, kind, user_input, ai_output, source) values (gen_random_uuid(), gen_random_uuid(), 16, 2, 'answer', 'x', 'y', 'llm')$q$, 'row-level security');
+select pg_temp.expect_error($q$insert into public.coach_turns (run_id, participant_id, day, turn, kind, user_input, ai_output, source) values (gen_random_uuid(), gen_random_uuid(), 16, 2, 'answer', 'x', 'y', 'llm')$q$, 'permission denied');
 select pg_temp.expect_error($q$select * from research.coach_log$q$, 'permission denied');
 
 select public.claim_participant(' Demo01 ', 'demopass1') as claimed;
@@ -51,9 +51,9 @@ end $$;
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000b2', false);
 do $$ begin
   if public.latest_record(16, 'layers') is not null then raise exception 'B can read A record'; end if;
-  if (select count(*) from public.runs) <> 0 then raise exception 'runs leaked via RLS'; end if;
-  if (select count(*) from public.records) <> 0 then raise exception 'records leaked via RLS'; end if;
 end $$;
+select pg_temp.expect_error('select count(*) from public.runs', 'permission denied');
+select pg_temp.expect_error('select count(*) from public.records', 'permission denied');
 select pg_temp.expect_error(format($q$select public.save_record(%L, 'x', '1')$q$, current_setting('test.run_a')), 'not_logged_in');
 
 -- B가 같은 참여번호로 로그인하면(다른 기기) A 세션은 연결이 끊긴다
@@ -91,3 +91,25 @@ do $$ begin
 end $$;
 
 select 'ALL SQL TESTS PASSED' as result;
+
+-- ── 서버 함수 역할(service_role)이 테이블을 읽고 쓸 수 있는지(자동 노출 꺼도 동작) ──
+set role service_role;
+do $$
+declare r uuid; p uuid; t bigint;
+begin
+  select id into p from public.participants where code = 'DEMO01';
+  insert into public.runs (participant_id, day) values (p, 17) returning id into r;
+  perform 1 from public.records where run_id = r;
+  perform term from public.crisis_terms limit 1;
+  insert into public.coach_turns (run_id, participant_id, day, turn, kind, user_input, ai_output, source)
+  values (r, p, 17, 2, 'answer', 'x', 'y', 'llm') returning id into t;
+  if t is null then raise exception 'service_role insert failed'; end if;
+  delete from public.runs where id = r;
+end $$;
+reset role;
+-- ── 참여자 역할은 테이블 권한 자체가 없어야 한다 ──
+do $$ begin
+  if has_table_privilege('authenticated', 'public.coach_turns', 'select') then raise exception 'authenticated has table privilege'; end if;
+  if has_table_privilege('anon', 'public.participants', 'select') then raise exception 'anon has table privilege'; end if;
+end $$;
+select 'SERVICE ROLE TESTS PASSED' as result;
