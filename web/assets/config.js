@@ -2,7 +2,7 @@
 // 두 값이 비어 있으면 「미리보기 모드」로 동작합니다: 기록은 이 브라우저에만 남고, AI 코치는 대본 문장으로 답합니다.
 window.APP_CONFIG = {
   // Supabase → Project Settings → API → Project URL   예) https://abcdefghijkl.supabase.co
-  SUPABASE_URL: '',
+  SUPABASE_URL: 'https://hxfmyleqzkldqipcokhv.supabase.co',
   // Supabase → Project Settings → API Keys → Publishable key(또는 anon public key)
   // 브라우저에 공개되도록 만든 키입니다. service_role / secret 키는 절대 넣지 마세요.
   SUPABASE_KEY: '',
