@@ -46,7 +46,17 @@ select public.create_participant('EXP01',  '다른접속코드99', 'expert'); --
 참여번호와 사람을 잇는 매칭키는 앱 밖에서 따로 보관합니다(계획서 19번).
 
 ### 5. AI 코치 함수 배포
-[Supabase CLI](https://supabase.com/docs/guides/cli)로 배포합니다(Node가 있으면 `npx`로 바로 실행 가능).
+
+**방법 A — GitHub Actions(설치 불필요, 권장)**
+1. Supabase 대시보드 **Edge Functions → Secrets**에 `ANTHROPIC_API_KEY` 추가
+2. Supabase 계정 메뉴 → **Access Tokens → Generate new token** → 복사
+3. GitHub 저장소 **Settings → Secrets and variables → Actions → New repository secret**
+   - `SUPABASE_ACCESS_TOKEN` = 2의 토큰
+   - `SUPABASE_PROJECT_ID` = 대시보드 주소 `/project/<ref>`의 ref
+4. GitHub **Actions → Deploy coach function → Run workflow**
+   이후에는 `supabase/functions/`가 바뀌어 `main`에 푸시될 때마다 자동 배포됩니다.
+
+**방법 B — 내 컴퓨터에서 [Supabase CLI](https://supabase.com/docs/guides/cli)**(Node가 있으면 `npx`로 바로 실행 가능).
 ```bash
 npx supabase login
 npx supabase link --project-ref <프로젝트 ref>          # 대시보드 주소의 /project/<ref>
