@@ -1,0 +1,6 @@
+# Supabase CLI 설정(이 저장소에서 쓰는 부분만)
+project_id = "eunsoo"
+
+[functions.coach]
+# 토큰은 함수 안에서 직접 확인한다(익명 로그인 세션 포함).
+verify_jwt = false

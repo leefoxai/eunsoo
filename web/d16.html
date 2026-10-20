@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>D16 · 겹겹 케이크 (시연)</title>
+<meta name="theme-color" content="#0E1726">
+<meta name="description" content="21일 프로그램 D16 시제품 — 소등 후 디자인. 겹겹 케이크, 그 아이의 층.">
+<style>
+:root{
+  --bg:#0E1726; --card:#172A44; --card2:#1D334F; --line:#2A4160;
+  --ink:#E9E4D8; --muted:#95A3B8; --dim:#6E7D94;
+  --amber:#D9A75C; --amber-ink:#1A1206; --rose:#D98B7A; --teal:#8FBF9F;
+  --r:18px; --pad:20px;
+  font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);min-height:100%}
+body{font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+#app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding:0 16px calc(24px + env(safe-area-inset-bottom))}
+.top{position:sticky;top:0;z-index:5;background:linear-gradient(var(--bg) 70%,transparent);padding:14px 0 10px}
+.top .row{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted)}
+.top .row b{color:var(--amber);font-weight:600}
+.bar{height:3px;background:var(--line);border-radius:3px;margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--amber);width:0;transition:width .5s ease}
+.screen{display:none;flex:1;flex-direction:column;animation:fade .45s ease}
+.screen.on{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.kicker{font-size:12px;color:var(--amber);letter-spacing:.08em;text-transform:uppercase;margin:6px 0 4px;font-weight:600}
+h1{font-size:24px;line-height:1.3;margin:0 0 6px;font-weight:700}
+h2{font-size:19px;line-height:1.35;margin:0 0 10px;font-weight:700}
+.sub{color:var(--muted);font-size:14px;margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:var(--pad);margin:0 0 12px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.card.amber{background:linear-gradient(160deg,#243B5B,#172A44);border-color:#3A5578}
+.card p{margin:0 0 10px}.card p:last-child{margin:0}
+.script{font-size:17px;line-height:1.75}
+.q{font-size:18px;font-weight:600;line-height:1.5;margin:0 0 12px}
+.note{font-size:13px;color:var(--muted);line-height:1.55}
+.src{font-size:11.5px;color:var(--dim);margin-top:8px}
+.tag{display:inline-block;font-size:11px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);margin-right:6px;margin-bottom:8px}
+.tag.private{border-color:#2E5B45;color:#A9D9BA;background:#162A20}
+.btns{margin-top:auto;padding-top:16px;display:flex;gap:10px}
+.btn{flex:1;appearance:none;border:0;border-radius:14px;padding:15px 16px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;transition:transform .08s,opacity .2s}
+.btn:active{transform:scale(.985)}
+.btn.primary{background:var(--amber);color:var(--amber-ink)}
+.btn.primary:disabled{opacity:.35;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.btn.sm{padding:10px 12px;font-size:14px;flex:0 0 auto}
+.voice{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--amber);background:#20334F;border:1px solid #33507A;border-radius:999px;padding:6px 12px;cursor:pointer;font-family:inherit;margin-bottom:12px}
+.voice.on{background:var(--amber);color:var(--amber-ink)}
+textarea,input[type=text]{width:100%;background:#0F1B2E;border:1px solid var(--line);border-radius:14px;color:var(--ink);padding:13px 14px;font-size:15.5px;font-family:inherit;line-height:1.5;resize:none}
+textarea:focus,input:focus{outline:none;border-color:var(--amber)}
+.field{margin:0 0 12px}
+.field .lab{font-size:13px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.ring{width:128px;height:128px;margin:14px auto;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring .n{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;font-variant-numeric:tabular-nums}
+.ring .n b{font-size:34px;font-weight:700;line-height:1}.ring .n span{font-size:12px;color:var(--muted)}
+.steps{display:flex;gap:4px;margin:0 0 12px}
+.steps i{flex:1;height:3px;border-radius:3px;background:var(--line)}
+.steps i.done{background:var(--amber)}.steps i.now{background:var(--line);position:relative;overflow:hidden}
+.steps i.now b{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--amber);opacity:.7;border-radius:3px}
+.breath{height:190px;display:flex;align-items:center;justify-content:center;margin:6px 0 2px}
+.orb{width:160px;height:160px;border-radius:50%;transform:scale(.3);background:radial-gradient(circle at 50% 45%,rgba(255,230,181,.95) 0%,rgba(217,167,92,.6) 38%,rgba(217,167,92,.14) 66%,transparent 70%);filter:drop-shadow(0 0 28px rgba(217,167,92,.28))}
+.orb.full{animation:settle 4s ease-in-out infinite}
+@keyframes settle{0%,100%{transform:scale(.96)}50%{transform:scale(1)}}
+.breath-cap{font-size:12px;color:var(--dim);text-align:center;letter-spacing:.06em}
+.hint{font-size:12.5px;color:var(--dim);text-align:center;margin-top:10px}
+details{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
+summary{cursor:pointer;color:var(--muted);font-size:13px;list-style:none}
+summary::before{content:"＋ ";color:var(--amber)}details[open] summary::before{content:"－ "}
+details .note{margin-top:8px}
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px}
+.chip{background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:14px;color:var(--ink);cursor:pointer;font-family:inherit;transition:all .15s}
+.chip.on{background:#3A4F6E;border-color:var(--amber);color:#FFF3DF}
+.chip.used{opacity:.45;text-decoration:line-through}
+.entry{margin-top:12px;background:#0F1B2E;border:1px solid var(--line);border-radius:14px;padding:12px;display:none}
+.entry.show{display:block;animation:fade .3s}
+.entry .lab{font-size:13px;color:var(--amber);margin-bottom:6px;font-weight:600}
+.entry .acts{display:flex;gap:8px;margin-top:8px}
+/* cake */
+.cakeWrap{position:relative;margin:4px auto 6px;max-width:330px}
+.cakeWrap svg{width:100%;height:auto;display:block}
+.layerIn{transform-origin:center;animation:drop .55s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes drop{from{transform:translateY(-70px);opacity:0}to{transform:none;opacity:1}}
+.counter{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);margin:4px 2px 6px}
+.counter b{color:var(--amber);font-variant-numeric:tabular-nums}
+.layerList{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.layerRow{display:flex;align-items:center;gap:8px;font-size:13.5px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:7px 10px}
+.layerRow .sw{width:12px;height:12px;border-radius:3px;flex:0 0 auto}
+.layerRow .sw.unk{background:transparent;border:1.5px dashed var(--muted)}
+.layerRow .t{flex:1;color:var(--ink)}
+.layerRow .t em{color:var(--muted);font-style:normal}
+.layerRow .x{background:none;border:0;color:var(--dim);cursor:pointer;font-size:16px;padding:0 4px}
+.sel-hint{font-size:12.5px;color:var(--amber);text-align:center;margin:4px 0 8px}
+.quote{border-left:2px solid var(--amber);padding:6px 12px;color:var(--muted);font-size:14px;margin:0 0 12px;background:#13223A;border-radius:0 10px 10px 0}
+.chat{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.msg{max-width:88%;padding:12px 14px;border-radius:16px;font-size:15px;line-height:1.55;animation:fade .4s}
+.msg.ai{background:var(--card);border:1px solid var(--line);border-bottom-left-radius:6px;align-self:flex-start}
+.msg.me{background:#3A4F6E;border-bottom-right-radius:6px;align-self:flex-end}
+.msg .who{display:block;font-size:11px;color:var(--amber);margin-bottom:4px;letter-spacing:.04em}
+.ledger ul{margin:0;padding-left:16px;font-size:13px;color:var(--muted)}
+#s0{justify-content:center;text-align:center}
+.lamp{width:92px;height:92px;border-radius:50%;margin:0 auto 20px;background:radial-gradient(circle at 50% 40%,#FFE6B5 0%,#D9A75C 35%,#5B4321 70%,transparent 72%);box-shadow:0 0 60px 10px rgba(217,167,92,.35);animation:dimming 2.6s ease forwards}
+@keyframes dimming{0%{filter:brightness(1.6)}60%{filter:brightness(.9)}100%{filter:brightness(.55);box-shadow:0 0 30px 2px rgba(217,167,92,.18)}}
+.quiet-t{color:var(--dim);font-size:12px;margin-top:16px}
+.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:#243B5B;border:1px solid #3A5578;color:var(--ink);padding:9px 14px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:9}
+.toast.show{opacity:1}
+.lock{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--teal);margin-bottom:10px}
+.flame{animation:flick 1.1s ease-in-out infinite alternate;transform-origin:50% 100%}
+@keyframes flick{from{transform:scaleY(1) scaleX(1)}to{transform:scaleY(1.15) scaleX(.9)}}
+</style>
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<div id="app">
+  <div class="top">
+    <div class="row"><span>D16 · 수 · <b>겹겹 케이크</b></span><span id="stepLab">시작</span></div>
+    <div class="bar"><i id="barFill"></i></div>
+  </div>
+
+  <!-- 0 -->
+  <section class="screen on" id="s0" data-label="시작">
+    <div class="lamp"></div>
+    <div class="kicker">3주차 · 적용 · 셋째 날</div>
+    <h1>겹겹 케이크</h1>
+    <div class="card amber" style="text-align:left">
+      <div class="kicker">여는 글</div>
+      <p class="script">우리는 사람을 한 단어로 부르는 데 익숙합니다. 조용한 애, 산만한 애, 튀는 애. 오늘은 그 한 단어 아래에 몇 겹이 더 있는지 헤아려 봅시다.</p>
+    </div>
+    <div class="btns"><button class="btn ghost" onclick="start()">여는 글 건너뛰기</button><button class="btn primary" id="startBtn" onclick="start()">시작하기</button></div>
+    <p class="quiet-t">이어폰을 권합니다 · 조용한 자리에서</p>
+  </section>
+
+  <!-- 1 60:40 -->
+  <section class="screen" id="s1" data-label="60:40">
+    <div class="kicker">숨 고르기 · 60:40 나에게 주의 기울이기</div>
+    <div class="steps" id="g-steps"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
+    <div class="card amber" style="text-align:center">
+      <p class="script" id="g-text">앉은 채로, 먼저 나에게 주의를 기울여 봅시다. 지금 내 몸은 어떤가요 — 어깨, 가슴, 호흡.</p>
+      <div class="breath"><div class="orb" id="g-orb"></div></div>
+      <p class="breath-cap" id="g-cap">천천히</p>
+      <p class="note" id="g-hint">바꾸려 하지 않고, 그저 알아차려 봅시다.</p>
+    </div>
+    <p class="hint">주의가 전부 아이에게 가 버렸나요? 괜찮습니다. 나에게 돌아왔다가, 다시 40만 보내 봅시다.</p>
+    <div class="btns"><button class="btn ghost" id="g-skip" onclick="guideSkip()">다음 단계</button><button class="btn primary" id="g-next" onclick="go(2)" disabled>다음으로</button></div>
+  </section>
+
+  <!-- 2 60:40 회수 -->
+  <section class="screen" id="s2" data-label="어제 60:40">
+    <div class="kicker">AI 1턴 · 어제 과제 회수 · 30초</div>
+    <div class="chat"><div class="msg ai"><span class="who">AI 코치</span>어제 학교에서 60:40, 실천해 보셨나요? 실천하기 어려웠다면 무엇이 방해되는 요소였나요?</div></div>
+    <div class="card">
+      <div class="field"><textarea rows="2" id="r6040" placeholder="해 봤다면 어땠는지, 어려움이 있었다면 무엇이 방해되는 요소였는지 — 한 줄"></textarea></div>
+    </div>
+    <div class="btns"><button class="btn primary" onclick="save('r6040','60:40 회수');go(3)">다음으로</button></div>
+  </section>
+
+  <!-- 3 케이크 카드 -->
+  <section class="screen" id="s3" data-label="케이크 카드">
+    <div class="kicker">겹겹 케이크 카드 · 90초</div>
+    <h2>여러 겹으로 이루어진 존재</h2>
+    <div class="card">
+      <div class="cakeWrap" id="cakeDemo"></div>
+      <p class="script">예를 들어, <b>사랑이</b>라는 아이가 있다면 — 여자아이면서 동시에 나이·가족의 형태·경제 형편·생김새·성격 등의 여러 겹을 가진 한 존재입니다. 겹겹으로 쌓아 올려진 케이크처럼 말이죠. 그러나 <b>한 겹만 보면 그 아이를 제대로 본 게 아닙니다.</b></p>
+    </div>
+    <div class="btns"><button class="btn primary" onclick="go(4)">다음으로</button></div>
+  </section>
+
+  <!-- 4 층 적기 -->
+  <section class="screen" id="s4" data-label="층 적기">
+    <div class="kicker">바라보기 · 그 아이의 층 적기 · 4분</div>
+    <div class="card">
+      <p class="q"><b class="nm">그 아이</b>에 관해 아는 만큼 적어 봅시다.</p>
+      <p class="note" style="margin-bottom:10px">여기서는 다섯 개의 층만 기재할 수 있습니다. <b>모르는 층은 ‘모름’으로 두어도 됩니다 — 모름 자체가 발견입니다.</b></p>
+      <div class="cakeWrap" id="cakeMain"></div>
+      <div class="counter"><span><b id="cnt">0</b> / 5층 · 다섯 층이 되면 초가 켜집니다</span><span id="unkCnt">모름 0</span></div>
+      <div class="chips" id="chips"></div>
+      <div class="entry" id="entry">
+        <div class="lab" id="entryLab">층 이름</div>
+        <input type="text" id="entryVal" placeholder="아는 만큼, 짧게" maxlength="30">
+        <div class="acts"><button class="btn ghost sm" onclick="addLayer(true)">모름으로 두기</button><button class="btn primary sm" style="flex:1" onclick="addLayer(false)">층 쌓기</button></div>
+        <p class="pii-note">학생 이름·학교 등 그 아이를 알아볼 수 있는 정보는 적지 않습니다.</p>
+      </div>
+      <div class="layerList" id="layerList"></div>
+    </div>
+    <div class="btns"><button class="btn primary" id="toNext" onclick="go(5)" disabled>다음으로</button></div>
+  </section>
+
+  <!-- 5 다시 보기 = 제대로 바라보기 -->
+  <section class="screen" id="s5" data-label="제대로 바라보기">
+    <div class="kicker">다시 보기 · 제대로 바라보기 · AI 코치 · 3분</div>
+    <div class="card">
+      <h2 style="margin-bottom:6px">제대로 바라보기</h2>
+      <div class="cakeWrap" id="cakePick"></div>
+    </div>
+    <div class="chat" id="chat"></div>
+    <div class="card" id="chatIn">
+      <div class="field"><textarea rows="3" id="chatTxt" placeholder="말로 해도, 글로 해도 됩니다" maxlength="1000"></textarea></div>
+      <div style="display:flex;gap:8px"><button class="btn ghost" onclick="aiSend('(건너뛰기)')" style="flex:0 0 auto">건너뛰기</button><button class="btn primary" id="sendBtn" onclick="aiSend()">보내기</button></div>
+      <p class="pii-note">학생 실명·학교명 등 알아볼 수 있는 정보는 적지 않습니다. 입력한 글은 AI 응답을 만들기 위해 Anthropic(미국)으로 전송됩니다.</p>
+    </div>
+    <div class="btns" id="chatDone" style="display:none"><button class="btn primary" onclick="go(6)">다음으로</button></div>
+  </section>
+
+
+  <!-- 6 마무리 -->
+  <section class="screen" id="s6" data-label="마무리">
+    <div class="kicker">마무리 · 예고 · 익일 과제</div>
+    <div class="card amber"><p class="script">내일은 <b class="nm">그 아이</b>에게 진심으로 궁금한 것을 적어 봅시다 — 오늘 <b>‘모름’</b>으로 남긴 층들이 출발점입니다.</p><p class="note" id="unkSummary"></p></div>
+    <div class="card">
+      <div class="kicker" style="margin-top:0">익일 교실 과제 · 선택</div>
+      <p class="script">내일 교실에서 딱 한 번, <b class="nm">그 아이</b>와 눈이 마주칠 때 먼저 나에게 주의를 두고, 그다음 40만 보내 봅시다. 오늘 쌓은 층 하나를 마음에 두고 봐도 좋습니다.</p>
+    </div>
+    <div class="card ledger"><div class="lock">🔒 오늘 저장된 것 — 선생님만 봅니다</div><ul id="led"></ul></div>
+    <div class="btns"><button class="btn ghost" style="flex:0 0 auto" onclick="location.href=App.link('index.html')">처음으로</button><button class="btn primary" id="finBtn" onclick="finish()">D16 마치기</button></div>
+    <p class="hint">내일 같은 시간에 뵙겠습니다.</p>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<script>
+const saved={};
+// 아이 별칭은 첫 화면에서 정한 값(서버). ?fast=1 이면 60:40 각 단계 4초, ?debug=1 이면 AI 응답 출처 표시.
+// 미리보기 모드(서버 미연결)에서는 ?name=별칭 으로 바꿔 볼 수 있다(논문 캡처용).
+const Q=new URLSearchParams(location.search); let child='ㅇㅇ'; const FAST=Q.get('fast')==='1';
+let layersSaved=Promise.resolve();
+const readyP=App.ready().then(m=>{
+  child=App.alias(); if(m&&m.preview&&Q.get('name'))child=Q.get('name').slice(0,12);
+  App.applyAlias(child); App.footer(); App.previewBand();
+});
+let starting=false;
+async function start(){
+  if(starting)return; starting=true; const b=document.getElementById('startBtn'); b.setAttribute('aria-busy','true');
+  try{ await readyP; await App.startRun(16); go(1); }
+  catch(e){ console.error(e); toast(App.errMsg(e)); starting=false; }
+  finally{ b.removeAttribute('aria-busy'); }
+}
+let finished=false;
+async function finish(){
+  const b=document.getElementById('finBtn');
+  if(finished){ location.href=App.link('d17.html'); return; }
+  b.setAttribute('aria-busy','true'); await App.complete(); b.removeAttribute('aria-busy');
+  finished=true; toast('D16 완료 · 내일 뵙겠습니다'); b.textContent='D17로 이어서 →';
+}
+let cur=0; const screens=[...document.querySelectorAll('.screen')]; const total=screens.length-1;
+function go(n){
+  screens[cur].classList.remove('on');cur=n;screens[cur].classList.add('on');window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('stepLab').textContent=screens[cur].dataset.label+' · '+cur+'/'+total;
+  document.getElementById('barFill').style.width=(cur/total*100)+'%';
+  App.applyAlias(child);
+  if(n===1)guideStart(); if(n===3)renderDemo(); if(n===4){buildChips();renderCake('cakeMain',false);} if(n===5){layersSaved=App.save('layers',layers);renderCake('cakePick',false);aiStart();} if(n===6)buildLedger();
+}
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1400);}
+function save(id,label){const v=document.getElementById(id).value.trim();if(v){saved[label]=v;App.save(id,v);toast('저장됨 · '+label);}}
+function say(){/* 음성 안내 제거: 텍스트만 표시 */}
+function speak(){}
+/* 60:40 */
+const G=[
+  {t:'앉은 채로, 먼저 나에게 주의를 기울여 봅시다. 지금 내 몸은 어떤가요? 어깨, 가슴, 호흡을 느껴 봅시다.',h:'바꾸려 하지 않고, 그저 알아차려 봅시다.',s:18},
+  {t:'지금 내 마음은 어떤가요?<br>서두르고 있나요, 지쳐 있나요, 괜찮나요?',h:'어느 쪽이어도 괜찮습니다. 그저 알아차려 봅시다.',s:20},
+  {t:'편안한 마음으로, 마음속 교실 문 앞에 아이가 서 있는 모습을 그려 봅시다. 주의의 40만 아이에게 보내 봅시다. 60은 나에게 둡시다.',h:'주의가 전부 아이에게 가 버렸나요? 괜찮습니다.',s:22},
+  {t:'다시 나에게 주의를 집중했다가, 그 아이에게 40만 보내 봅니다.',h:'원하는 만큼만 바라보고, 충분하면 나에게 돌아옵시다.',s:18},
+  {t:'아이도 자기 필요를 스스로 돌볼 수 있다고 믿어 봅시다.',h:'이제 어제 과제를 돌아봅시다.',s:15},
+];
+let gi=0,gt=null;
+function guideStart(){gi=0;guideStep();}
+function orbTo(scale,sec){const o=document.getElementById('g-orb');o.classList.remove('full');o.style.transition='none';o.style.transform='scale(.3)';void o.offsetWidth;o.style.transition='transform '+sec+'s cubic-bezier(.33,0,.4,1)';o.style.transform='scale('+scale+')';}
+function guideStep(){
+  if(gt)clearTimeout(gt);
+  const steps=[...document.querySelectorAll('#g-steps i')];
+  steps.forEach((st,i)=>{st.className=i<gi?'done':(i===gi?'now':'');const b=st.querySelector('b');if(b){b.style.transition='none';b.style.width='0';}});
+  if(gi>=G.length){document.getElementById('g-text').textContent='좋습니다. 잘하셨습니다.';document.getElementById('g-hint').textContent='';document.getElementById('g-cap').textContent='';const o=document.getElementById('g-orb');o.style.transition='transform 1.5s ease';o.style.transform='scale(1)';o.classList.add('full');document.getElementById('g-next').disabled=false;document.getElementById('g-skip').style.display='none';return;}
+  const g=Object.assign({},G[gi],FAST?{s:4}:{});document.getElementById('g-text').innerHTML=g.t;document.getElementById('g-hint').textContent=g.h;document.getElementById('g-cap').textContent='천천히';say(g.t.replace(/<br>/g,' '),.7);
+  orbTo(1,g.s);
+  const nb=steps[gi]&&steps[gi].querySelector('b');if(nb){void nb.offsetWidth;nb.style.transition='width '+g.s+'s linear';nb.style.width='100%';}
+  gt=setTimeout(()=>{gi++;guideStep();},g.s*1000);
+}
+function guideSkip(){if(gt)clearTimeout(gt);gi++;guideStep();}
+
+/* ---------- 층 데이터 ---------- */
+const CATS=['나이','성별','가족의 형태','경제 형편','생김새·외모','성격','활동성·에너지','몰입 수준','좋아하는 것','잘하는 것','두려워하는 것','기타'];
+const PAL=['#C98F62','#B07A8C','#7E9C8E','#9B8BB8','#C9A85C','#7F96B8','#B8766A','#8FA86B','#A88A6E','#8C9BB0','#BF9A7A','#7FA6A0'];
+let layers=[]; // {cat,val,unknown}
+let pickCat=null, selected=null, lastAdded=-1;
+
+function buildChips(){
+  const c=document.getElementById('chips');if(c.children.length)return;
+  CATS.forEach(t=>{const b=document.createElement('button');b.className='chip';b.textContent=t;b.onclick=()=>openEntry(t,b);c.appendChild(b);});
+}
+function openEntry(cat,btn){
+  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));btn.classList.add('on');pickCat=cat;
+  const e=document.getElementById('entry');e.classList.add('show');
+  const isEtc=cat==='기타';
+  document.getElementById('entryLab').textContent=isEtc?'기타 — 층 이름과 내용을 함께':cat;
+  const inp=document.getElementById('entryVal');inp.value='';inp.placeholder=isEtc?'예: 형제 · 둘째':'아는 만큼, 짧게';inp.focus();
+  e.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function addLayer(unknown){
+  if(!pickCat)return;if(layers.length>=5){toast('여기서는 다섯 층까지만 — 충분합니다');return;}const v=document.getElementById('entryVal').value.trim();
+  if(!unknown&&!v){toast('한두 단어면 됩니다 — 모르면 ‘모름’도 됩니다');return;}
+  let cat=pickCat,val=v;
+  if(cat==='기타'){ if(!v&&unknown){toast('기타는 층 이름을 적어 주세요');return;} const parts=v.split(/[·:：]/); cat=parts[0].trim()||'기타'; val=(parts.slice(1).join(' ').trim())||(unknown?'':v); }
+  layers.push({cat,val:unknown?'':val,unknown});lastAdded=layers.length-1;
+  document.getElementById('entry').classList.remove('show');
+  document.querySelectorAll('.chip').forEach(x=>{x.classList.remove('on');if(x.textContent===pickCat&&pickCat!=='기타')x.classList.add('used');});
+  pickCat=null;renderCake('cakeMain',false);renderList();
+  if(layers.length===5)setTimeout(()=>toast('🕯 초가 켜졌습니다 — 다섯 층'),500);
+}
+function removeLayer(i){layers.splice(i,1);lastAdded=-1;document.querySelectorAll('.chip').forEach(x=>{if(!layers.some(l=>l.cat===x.textContent))x.classList.remove('used');});renderCake('cakeMain',false);renderList();}
+function renderList(){
+  const L=document.getElementById('layerList');L.innerHTML='';
+  layers.forEach((l,i)=>{const r=document.createElement('div');r.className='layerRow';
+    r.innerHTML='<span class="sw '+(l.unknown?'unk':'')+'" style="'+(l.unknown?'':'background:'+PAL[i%PAL.length])+'"></span><span class="t">'+esc(l.cat)+(l.unknown?' <em>· 모름</em>':' <em>·</em> '+esc(l.val))+'</span><button class="x" onclick="removeLayer('+i+')" aria-label="삭제">×</button>';L.appendChild(r);});
+  document.getElementById('cnt').textContent=layers.length;document.getElementById('unkCnt').textContent='모름 '+layers.filter(l=>l.unknown).length;
+  document.getElementById('toNext').disabled=layers.length<1;
+  document.getElementById('toNext').textContent=layers.length<5?'다음으로 ('+layers.length+'/5층)':'다음으로';
+}
+
+/* ---------- 케이크 SVG ---------- */
+function cakeSVG(ls,opts){
+  const W=330,H=330,cx=W/2,plateY=292,maxW=250,minW=150;
+  const n=ls.length;const lh=Math.max(16,Math.min(34,220/Math.max(n,1)));
+  let s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
+  s+='<defs><pattern id="qp" width="14" height="14" patternUnits="userSpaceOnUse"><text x="2" y="11" font-size="10" fill="#95A3B8" opacity=".55">?</text></pattern><filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>';
+  // plate
+  s+='<ellipse cx="'+cx+'" cy="'+(plateY+6)+'" rx="150" ry="14" fill="#0B1322" opacity=".8"/><ellipse cx="'+cx+'" cy="'+plateY+'" rx="150" ry="14" fill="#2A4160"/><ellipse cx="'+cx+'" cy="'+(plateY-2)+'" rx="140" ry="11" fill="#33507A"/>';
+  if(n===0){s+='<text x="'+cx+'" y="'+(plateY-60)+'" text-anchor="middle" fill="#6E7D94" font-size="13">아직 한 층도 없습니다</text><text x="'+cx+'" y="'+(plateY-40)+'" text-anchor="middle" fill="#6E7D94" font-size="12">아래에서 층을 골라 쌓아 보세요</text>';}
+  let y=plateY-4;
+  ls.forEach((l,i)=>{
+    const w=maxW-(maxW-minW)*(i/Math.max(n-1,1))*(n>1?1:0);const x=cx-w/2;y-=lh;
+    const fill=l.unknown?'#1D334F':PAL[i%PAL.length];const isSel=opts.selected===i;const anim=(opts.animateLast&&i===lastAdded)?' class="layerIn"':'';
+    s+='<g'+anim+(opts.selectable?' style="cursor:pointer" onclick="selectLayer('+i+')"':'')+'>';
+    // side
+    s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+lh+'" rx="5" fill="'+fill+'" '+(l.unknown?'stroke="#95A3B8" stroke-dasharray="4 3" stroke-width="1.2"':'')+(isSel?' filter="url(#glow)" stroke="#FFE6B5" stroke-width="2"':'')+'/>';
+    if(l.unknown)s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+lh+'" rx="5" fill="url(#qp)"/>';
+    // frosting line
+    s+='<rect x="'+(x+4)+'" y="'+(y+2)+'" width="'+(w-8)+'" height="3" rx="1.5" fill="#FFFFFF" opacity="'+(l.unknown?'.08':'.22')+'"/>';
+    // label
+    const lab=l.unknown?l.cat+' · 모름':(l.val?l.cat+' · '+l.val:l.cat);const fs=lh>=24?11.5:(lh>=18?10:0);
+    if(fs)s+='<text x="'+cx+'" y="'+(y+lh/2+4)+'" text-anchor="middle" font-size="'+fs+'" fill="'+(l.unknown?'#95A3B8':'#1A1206')+'" font-weight="600">'+esc(trunc(lab,w/fs*1.6))+'</text>';
+    s+='</g>';
+  });
+  // candle when >=5
+  if(n>=5){const topY=y;s+='<rect x="'+(cx-3)+'" y="'+(topY-26)+'" width="6" height="26" rx="2" fill="#E9E4D8"/><ellipse class="flame" cx="'+cx+'" cy="'+(topY-32)+'" rx="5" ry="9" fill="#FFD27A"/><ellipse cx="'+cx+'" cy="'+(topY-30)+'" rx="2.4" ry="5" fill="#FFF3DF"/><ellipse cx="'+cx+'" cy="'+(topY-32)+'" rx="22" ry="22" fill="#D9A75C" opacity=".12"/>';}
+  s+='</svg>';return s;
+}
+function renderCake(id,selectable){document.getElementById(id).innerHTML=cakeSVG(layers,{selectable,selected:selectable?selected:-1,animateLast:!selectable});}
+function renderDemo(){
+  const demo=[{cat:'사랑이',val:'여자아이',unknown:false},{cat:'나이',val:'11살',unknown:false},{cat:'가족의 형태',val:'모름',unknown:true},{cat:'경제 형편',val:'모름',unknown:true},{cat:'생김새',val:'키가 큼',unknown:false},{cat:'성격',val:'조용함',unknown:false}];
+  const el=document.getElementById('cakeDemo');el.innerHTML='';let i=0;
+  const step=()=>{if(i>demo.length)return;el.innerHTML=cakeSVG(demo.slice(0,i).map(d=>({cat:d.cat,val:d.unknown?'':d.val,unknown:d.unknown})),{selectable:false,selected:-1,animateLast:false});i++;setTimeout(step,420);};
+  step();
+}
+function selectLayer(i){selected=i;renderCake('cakePick',true);const l=layers[i];document.getElementById('selHint').textContent='고른 층: '+l.cat+(l.unknown?' · 모름':' · '+l.val);saved['고른 층']=l.cat+(l.unknown?'(모름)':'');}
+function trunc(s,n){n=Math.floor(n);return s.length>n?s.slice(0,Math.max(2,n-1))+'…':s;}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* ---------- AI 코치 (돌아보기) ----------
+   서버 함수(coach)가 지침 다섯 겹을 적용해 답한다. 서버에 닿지 못하면 아래 대본 문장(시제품 문장)으로 이어 간다. */
+let turn=0, busy=false, localOnly=!App.online;
+const chatEl=()=>document.getElementById('chat');
+function aiMsg(t){const d=document.createElement('div');d.className='msg ai';d.innerHTML='<span class="who">AI 코치</span>'+t;chatEl().appendChild(d);}
+function meMsg(t){const d=document.createElement('div');d.className='msg me';d.textContent=t;chatEl().appendChild(d);}
+function sh(s,n=40){return s.length>n?s.slice(0,n)+'…':s;}
+function unkList(){return layers.filter(l=>l.unknown).map(l=>l.cat);}
+function typing(on){let el=document.getElementById('typing');if(on&&!el){el=document.createElement('div');el.id='typing';el.className='msg ai typing';el.innerHTML='<span class="who">AI 코치</span><span class="dots" aria-label="답을 쓰는 중"><i></i><i></i><i></i></span>';chatEl().appendChild(el);}if(!on&&el)el.remove();}
+function setBusy(on){const b=document.getElementById('sendBtn');if(on)b.setAttribute('aria-busy','true');else b.removeAttribute('aria-busy');}
+function aiReply(r){
+  const d=document.createElement('div');d.className='msg ai'+(r.kind==='crisis'?' crisis':'');
+  const who=document.createElement('span');who.className='who';who.textContent='AI 코치';
+  if(App.debug&&r.source){const tg=document.createElement('span');tg.className='src-tag';tg.textContent=r.source;who.appendChild(tg);}
+  d.appendChild(who);
+  if(r.reply){const s=document.createElement('span');s.textContent=r.reply;d.appendChild(s);}
+  if(r.question){if(r.reply)d.appendChild(document.createElement('br'));const b=document.createElement('b');b.textContent=r.question;d.appendChild(b);}
+  App.reportLink(d,r.turn_id);
+  chatEl().appendChild(d);
+}
+function aiStart(){
+  if(turn||chatEl().children.length)return;
+  aiMsg('이 케이크는 내가 <b>'+App.esc(child)+'</b>'+App.josa(child,'을/를')+' 어떻게 바라보고 있는지를 보여 주는 상징일 수 있습니다. <b>나는 이 케이크를 그 아이에게 선물할 수 있을까요?</b>');
+}
+const Q2='내가 만든 겹겹 케이크를 바라보며, 어떤 감정이나 생각이 드는지 자유롭게 적어 보세요.';
+function localCoach(t){
+  const crisis=App.localCrisis(t);
+  if(crisis)return {kind:'crisis',reply:crisis,question:'',done:false,source:'local'};
+  const skip=t==='(건너뛰기)';
+  const echo=skip?'네, 넘어가겠습니다.':'‘'+sh(t,30)+'’ — 그렇게 들었습니다.';
+  if(turn===0)return {kind:skip?'skip':'answer',reply:echo,question:Q2,done:false,source:'local'};
+  const u=unkList(),N=layers.length;
+  const sum=u.length?' 오늘 '+child+'의 층을 '+N+'겹 쌓으셨고, 그중 ‘모름’이 '+u.length+'층입니다. 모름으로 둔 층은 내일 다시 꺼내 봅니다.'
+                    :' 오늘 '+child+'의 층을 '+N+'겹 쌓으셨습니다. 내일은 가장 눈에 띄는 층에서 시작합니다.';
+  return {kind:skip?'skip':'answer',reply:echo+(skip?'':' 한 아이를 한 층으로 부르지 않으려 한 것 — 그게 오늘 하신 일입니다.')+sum+' 오늘은 여기까지입니다.',question:'',done:true,source:'local'};
+}
+async function aiSend(forced){
+  if(busy)return;
+  const ta=document.getElementById('chatTxt');const t=(forced||ta.value).trim();if(!t)return;
+  ta.value='';meMsg(t);busy=true;setBusy(true);typing(true);
+  let r=null;
+  if(!localOnly){
+    try{await layersSaved;r=await App.coach(t);}
+    catch(e){console.warn('AI 코치 서버에 닿지 못해 대본 문장으로 이어 갑니다',e);localOnly=true;}
+  }
+  if(!r){await new Promise(res=>setTimeout(res,600));r=localCoach(t);}
+  typing(false);busy=false;setBusy(false);
+  if(r.closed){finishChat();return;}
+  aiReply(r);
+  if(r.kind==='answer'||r.kind==='skip'){
+    if(r.kind==='answer')saved[turn===0?'케이크를 선물할 수 있을까':'케이크를 바라보며']=t;
+    turn++;
+  }
+  if(r.done)finishChat();
+  window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+}
+function finishChat(){
+  const u=unkList();
+  saved['AI 요약']='케이크를 바라보며 — 내가 그 아이를 어떻게 보고 있는지';
+  saved['모름 층']=u.length?u.join(', '):'(없음)';
+  document.getElementById('chatIn').style.display='none';document.getElementById('chatDone').style.display='flex';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)&&document.activeElement&&document.activeElement.id==='chatTxt')aiSend();});
+function buildLedger(){
+  const u=unkList();document.getElementById('unkSummary').textContent=u.length?'오늘 ‘모름’으로 둔 층: '+u.join(' · ')+' — 내일 재제시됩니다.':'오늘은 모든 층을 채우셨습니다 — 내일은 가장 눈에 띄는 층에서 시작합니다.';
+  const ul=document.getElementById('led');ul.innerHTML='';saved['케이크']=layers.length+'층 (모름 '+u.length+')';
+  Object.keys(saved).forEach(k=>{const li=document.createElement('li');li.textContent=k+(k==='케이크'||k==='모름 층'?' — '+saved[k]:'');ul.appendChild(li);});
+}
+</script>
+</body>
+</html>

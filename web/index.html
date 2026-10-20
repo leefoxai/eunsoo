@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>21일 프로그램 · 시연</title>
+<meta name="description" content="초등교사 사회정서역량 21일 프로그램 — D16·D17 시연">
+<meta name="theme-color" content="#0E1726">
+<style>
+:root{
+  --bg:#0E1726; --card:#172A44; --card2:#1D334F; --line:#2A4160;
+  --ink:#E9E4D8; --muted:#95A3B8; --dim:#6E7D94;
+  --amber:#D9A75C; --amber-ink:#1A1206; --rose:#D98B7A; --teal:#8FBF9F;
+  --r:18px; --pad:20px;
+  font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);min-height:100%}
+body{font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+#app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding:0 16px calc(24px + env(safe-area-inset-bottom))}
+.top{padding:18px 0 6px}
+.kicker{font-size:12px;color:var(--amber);letter-spacing:.08em;margin:6px 0 4px;font-weight:600}
+h1{font-size:24px;line-height:1.3;margin:0 0 6px;font-weight:700}
+.sub{color:var(--muted);font-size:14px;margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:var(--pad);margin:0 0 12px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.card h2{font-size:16px;margin:0 0 8px}
+.note{font-size:13px;color:var(--muted);line-height:1.55;margin:0}
+.field{margin:0 0 12px}
+.lab{font-size:13px;color:var(--muted);margin-bottom:6px;display:block}
+input[type=text],input[type=password]{width:100%;background:#0F1B2E;border:1px solid var(--line);border-radius:14px;color:var(--ink);padding:13px 14px;font-size:16px;font-family:inherit}
+input:focus{outline:none;border-color:var(--amber)}
+.btn{appearance:none;border:0;border-radius:14px;padding:14px 16px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;width:100%}
+.btn.primary{background:var(--amber);color:var(--amber-ink)}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.btn.sm{width:auto;padding:9px 12px;font-size:14px}
+.btn[aria-busy="true"]{opacity:.6;pointer-events:none}
+.row{display:flex;gap:8px;align-items:center}
+.row input{flex:1}
+.err{color:#F0C9BE;font-size:13px;margin:8px 0 0;min-height:1em}
+.who{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted)}
+.who b{color:var(--ink);font-size:16px}
+.day{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin:0 0 10px;transition:border-color .15s}
+.day:hover,.day:focus-visible{border-color:var(--amber);outline:none}
+.day .d{font-size:12px;color:var(--amber);font-weight:600;letter-spacing:.06em}
+.day .t{font-size:18px;font-weight:700;margin:2px 0 4px}
+.day .s{font-size:13px;color:var(--muted)}
+.day .st{font-size:12px;color:var(--teal);margin-top:6px}
+.toggle{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);margin:4px 2px 12px}
+.toggle input{width:18px;height:18px;accent-color:var(--amber)}
+details{border-top:1px dashed var(--line);padding-top:10px;margin-top:4px}
+summary{cursor:pointer;color:var(--muted);font-size:14px}
+details ul{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}
+details li{margin-bottom:4px}
+.toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:#243B5B;border:1px solid #3A5578;color:var(--ink);padding:9px 14px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:9}
+.toast.show{opacity:1}
+[hidden]{display:none!important}
+</style>
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<div id="app">
+  <div class="top">
+    <div class="kicker">21일 프로그램 · 3주차 적용</div>
+    <h1>이번 주, 한 아이</h1>
+    <p class="sub">D16 겹겹 케이크 · D17 공감적 호기심 — 시연</p>
+  </div>
+
+  <!-- 로그인 -->
+  <section class="card" id="login" hidden>
+    <h2>참여번호로 들어가기</h2>
+    <form id="loginForm" autocomplete="off">
+      <div class="field"><label class="lab" for="code">참여번호</label><input type="text" id="code" inputmode="text" autocapitalize="characters" spellcheck="false" placeholder="예: DEMO01" required></div>
+      <div class="field"><label class="lab" for="key">접속 코드</label><input type="password" id="key" placeholder="연구자가 안내한 코드" required></div>
+      <button class="btn primary" id="loginBtn" type="submit">들어가기</button>
+      <p class="err" id="loginErr" role="alert"></p>
+    </form>
+    <p class="note">이름·연락처는 묻지 않습니다. 기록은 참여번호로만 저장됩니다.</p>
+  </section>
+
+  <!-- 홈 -->
+  <section id="home" hidden>
+    <div class="card">
+      <div class="who"><span>참여번호 <b id="meCode"></b></span><button class="btn ghost sm" id="logoutBtn" type="button">나가기</button></div>
+    </div>
+
+    <div class="card">
+      <h2>그 아이의 별칭</h2>
+      <p class="note" style="margin-bottom:10px">2주차에 떠올린 ‘마음이 쓰이는 그 아이’를 부를 이름입니다. <b>학생 실명 대신 별칭</b>(예: ㅇㅇ, 초록이)으로 적어 주세요. AI 코치에게는 이 별칭만 전달됩니다.</p>
+      <div class="row"><input type="text" id="alias" maxlength="12" placeholder="ㅇㅇ" aria-label="그 아이의 별칭"><button class="btn primary sm" id="aliasBtn" type="button">저장</button></div>
+    </div>
+
+    <a class="day" id="goD16" href="d16.html">
+      <div class="d">D16 · 수</div>
+      <div class="t">겹겹 케이크</div>
+      <div class="s">한 겹만 보면 제대로 본 게 아니다 · 약 13분</div>
+      <div class="st" id="st16"></div>
+    </a>
+    <a class="day" id="goD17" href="d17.html">
+      <div class="d">D17 · 목</div>
+      <div class="t">공감적 호기심</div>
+      <div class="s">D16에서 ‘모름’으로 둔 층에서 출발합니다 · 약 11분</div>
+      <div class="st" id="st17"></div>
+    </a>
+
+    <label class="toggle"><input type="checkbox" id="fast"> 시연용으로 빠르게(숨 고르기 각 단계 4초)</label>
+
+    <div class="card">
+      <details>
+        <summary>앱 이용 안내</summary>
+        <ul>
+          <li>AI 코치는 상담·치료를 제공하지 않는, 성찰을 돕는 보조 도구입니다. 조언이나 평가를 하지 않고 오늘의 질문만 건넵니다.</li>
+          <li>앱에는 세션 시작·완료 시각, 세션 기록, AI 성찰 대화가 참여번호로만 저장됩니다(서울 리전 서버).</li>
+          <li>AI 응답을 만들기 위해 입력한 글은 Anthropic(미국)으로 전송되며, 통상 30일 이내 삭제됩니다.</li>
+          <li>연구책임자가 AI 대화 기록을 주 1회 점검합니다. 실시간으로 지켜보는 것은 아닙니다. 부적절한 응답은 메시지 아래 「신고」로 알려 주세요.</li>
+          <li>학생 실명·학교명 등 알아볼 수 있는 정보는 적지 않습니다.</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<script>
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1600);}
+const $=id=>document.getElementById(id);
+const P=new URLSearchParams(location.search);
+let fast=P.get('fast')==='1';
+try{ if(P.get('fast')===null) fast=localStorage.getItem('eunsoo:fast')==='1'; }catch(e){}
+$('fast').checked=fast;
+$('fast').onchange=()=>{fast=$('fast').checked;try{localStorage.setItem('eunsoo:fast',fast?'1':'0');}catch(e){}setLinks();};
+
+function link(page){const q=[];if(fast)q.push('fast=1');if(App.debug)q.push('debug=1');return page+(q.length?'?'+q.join('&'):'');}
+function setLinks(){$('goD16').href=link('d16.html');$('goD17').href=link('d17.html');}
+
+function fmt(ts){if(!ts)return '';const d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+async function showHome(m){
+  const next=App.safeNext(P.get('next'));
+  if(next){location.replace(next);return;}
+  $('login').hidden=true;$('home').hidden=false;App.footer();
+  $('meCode').textContent=m.code;
+  $('alias').value=m.child_alias||'';
+  $('logoutBtn').hidden=!App.online;
+  setLinks();
+  try{
+    const st=await App.status();
+    [16,17].forEach(d=>{const s=st.find(x=>x.day===d);$('st'+d).textContent=s?(s.completed?'완료 '+s.completed+'회 · 최근 '+fmt(s.last_completed_at):'시작 '+s.runs+'회 · 최근 '+fmt(s.last_started_at)):'';});
+  }catch(e){console.warn(e);}
+}
+function showLogin(){$('home').hidden=true;$('login').hidden=false;$('code').focus();}
+
+$('loginForm').onsubmit=async ev=>{
+  ev.preventDefault();
+  const b=$('loginBtn');b.setAttribute('aria-busy','true');$('loginErr').textContent='';
+  try{const m=await App.login($('code').value.trim(),$('key').value);await showHome(m);}
+  catch(e){console.warn(e);$('loginErr').textContent=App.errMsg(e);}
+  finally{b.removeAttribute('aria-busy');}
+};
+$('logoutBtn').onclick=async()=>{await App.logout();showLogin();};
+$('aliasBtn').onclick=async()=>{
+  const v=$('alias').value.trim();
+  const b=$('aliasBtn');b.setAttribute('aria-busy','true');
+  try{await App.setAlias(v||null);toast(v?'별칭을 저장했습니다 · '+v:'별칭을 비웠습니다 — ‘ㅇㅇ’로 부릅니다');}
+  catch(e){toast(App.errMsg(e));}
+  finally{b.removeAttribute('aria-busy');}
+};
+
+App.current().then(m=>{
+  App.footer(); App.previewBand();
+  if(m)showHome(m); else showLogin();
+}).catch(e=>{console.error(e);App.footer();showLogin();$('loginErr').textContent=App.errMsg(e);});
+</script>
+</body>
+</html>

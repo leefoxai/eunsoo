@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+.env
+.env.*
+supabase/.temp/
+supabase/.branches/
+.vercel
+tests/e2e/out/
