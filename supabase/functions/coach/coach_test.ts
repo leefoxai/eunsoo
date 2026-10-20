@@ -46,6 +46,7 @@ Deno.test("D16 턴2: 반영+인정 뒤 질문 2를 글자 그대로 붙인다", 
   assertStringIncludes(log[0].system[1], "[현재 턴] 2/3");
   assertStringIncludes(log[0].system[1], "가족의 형태·모름");
   assertStringIncludes(log[0].system[1], "(N=5, n=2)");
+  assertStringIncludes(log[0].system[1], "— 그렇게 들었습니다. ‘~라고 답하셨습니다’");
   assertEquals(log[0].messages, [{ role: "user", content: "선물하기엔 아직 비어 있는 층이 많아요" }]);
 });
 

@@ -223,6 +223,9 @@ const D17: DayConfig = {
 
 export const DAYS: Record<number, DayConfig> = { 16: D16, 17: D17 };
 
+// 반영(R) 형식 — 시스템 프롬프트 3번의 "'…' — 그렇게 들었습니다."를 매 턴 다시 짚어 준다
+const REFLECT_FORM = "형식: ‘참여자 표현 그대로 짧게’ — 그렇게 들었습니다. ‘~라고 답하셨습니다’·‘~군요’로 바꾸지 않음";
+
 // ───────────── ③ 매 호출에 붙이는 블록 — 지침 3절 형식 ─────────────
 export function buildDayBlock(cfg: DayConfig, ctx: DayCtx, aiTurn: number, skipped: boolean): string {
   const qs = cfg.questions(ctx.alias);
@@ -235,9 +238,9 @@ export function buildDayBlock(cfg: DayConfig, ctx: DayCtx, aiTurn: number, skipp
   if (isFinal) {
     now = skipped
       ? `참여자가 ${qs.length}번 질문을 건너뛰었습니다. "${FIXED.skip}"로 시작한 뒤 인정 1문장(「${cfg.affirm}」) → 요약 2문장 → "${FIXED.end}". 질문은 하지 않습니다.`
-      : `마지막 턴입니다. 반영 1문장 → 인정 1문장(「${cfg.affirm}」) → 요약 2문장 → "${FIXED.end}". 모두 5문장 이내, 질문은 하지 않습니다.`;
+      : `마지막 턴입니다. 반영 1문장(${REFLECT_FORM}) → 인정 1문장(「${cfg.affirm}」) → 요약 2문장 → "${FIXED.end}". 모두 5문장 이내, 질문은 하지 않습니다.`;
   } else {
-    now = `참여자가 ${aiTurn - 1}번 질문에 답했습니다. 반영 1문장 → (인정 0~1문장) → ${aiTurn}번 질문을 글자 그대로: 「${qs[aiTurn - 1]}」 질문 앞에 번호나 'Q${aiTurn}.'를 붙이지 않습니다.`;
+    now = `참여자가 ${aiTurn - 1}번 질문에 답했습니다. 반영 1문장(${REFLECT_FORM}) → (인정 0~1문장) → ${aiTurn}번 질문을 글자 그대로: 「${qs[aiTurn - 1]}」 질문 앞에 번호나 'Q${aiTurn}.'를 붙이지 않습니다.`;
   }
 
   return [
