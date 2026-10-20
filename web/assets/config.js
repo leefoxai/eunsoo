@@ -5,7 +5,7 @@ window.APP_CONFIG = {
   SUPABASE_URL: 'https://hxfmyleqzkldqipcokhv.supabase.co',
   // Supabase → Project Settings → API Keys → Publishable key(또는 anon public key)
   // 브라우저에 공개되도록 만든 키입니다. service_role / secret 키는 절대 넣지 마세요.
-  SUPABASE_KEY: '',
+  SUPABASE_KEY: 'sb_publishable_o-w_acsQ0WPsEmOFM4yuow_iUCbRSA7',
   // AI 코치 서버 함수를 서울 리전에서 실행(연구계획서 19번: Supabase 서울 → Anthropic)
   FUNCTION_REGION: 'ap-northeast-2',
   // 화면 아래에 표시할 연구자 문의처(연구계획서 19번 (1)). 예) '연구책임자 이메일 ○○○@yonsei.ac.kr'
