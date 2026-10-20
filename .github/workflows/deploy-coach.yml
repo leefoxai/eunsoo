@@ -8,7 +8,7 @@ name: Deploy coach function
 on:
   push:
     branches: [main]
-    paths: ['supabase/functions/**', 'supabase/config.toml']
+    paths: ['supabase/functions/**', 'supabase/config.toml', '.github/workflows/deploy-coach.yml']
   workflow_dispatch:
 
 jobs:
@@ -28,4 +28,12 @@ jobs:
             echo "::error::SUPABASE_ACCESS_TOKEN / SUPABASE_PROJECT_ID 저장소 비밀값을 먼저 등록하세요"; exit 1
           fi
       - name: Deploy
-        run: supabase functions deploy coach --project-ref "$PROJECT_ID" --no-verify-jwt
+        run: |
+          set -o pipefail
+          supabase --version
+          if ! supabase functions deploy coach --project-ref "$PROJECT_ID" --no-verify-jwt 2>&1 | tee deploy.log; then
+            # 실패 원인을 주석(annotation)으로 남겨 Actions 요약 화면에서 바로 보이게 한다
+            msg=$(tail -n 15 deploy.log | sed -e 's/%/%25/g' | awk 'BEGIN{ORS="%0A"} {print}')
+            echo "::error title=supabase functions deploy 실패::${msg}"
+            exit 1
+          fi
